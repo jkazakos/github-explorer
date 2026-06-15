@@ -66,10 +66,9 @@ export async function GET(request: NextRequest) {
       if (res.status === 401) {
         return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
       }
-      const errData = await res.json().catch(() => ({}));
       return NextResponse.json(
         {
-          error: errData.message || `GitHub API returned status ${res.status}`,
+          error: `GitHub API returned status ${res.status}`,
         },
         { status: res.status },
       );
