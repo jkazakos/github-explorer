@@ -1,8 +1,8 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "";
-const redisToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
+const redisUrl = process.env.KV_REST_API_URL || "";
+const redisToken = process.env.KV_REST_API_TOKEN || "";
 
 const ratelimit = new Ratelimit({
   redis: new Redis({ url: redisUrl, token: redisToken }),
@@ -10,6 +10,12 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
+/**
+ * Checks the rate limit for a given IP address.
+ *
+ * @param ip - The IP address to check the rate limit for.
+ * @returns An object indicating whether the request is successful, the rate limit details, and the reset time.
+ */
 export async function checkRateLimit(ip: string): Promise<{ success: boolean; limit: number; remaining: number; reset: number }> {
   try {
     // If running locally without variables, allow the request

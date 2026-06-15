@@ -1,3 +1,6 @@
+/**
+ * Represents a GitHub User entity fetched from the REST API.
+ */
 export interface GitHubUser {
   login: string;
   id: number;
@@ -16,6 +19,9 @@ export interface GitHubUser {
   type: string;
 }
 
+/**
+ * Represents a GitHub Repository entity fetched from the REST API.
+ */
 export interface GitHubRepo {
   id: number;
   name: string;
@@ -27,6 +33,9 @@ export interface GitHubRepo {
   license: { name: string } | null;
 }
 
+/**
+ * Represents a brief GitHub Follower entity fetched from the REST API.
+ */
 export interface GitHubFollower {
   login: string;
   id: number;
@@ -35,6 +44,9 @@ export interface GitHubFollower {
   name: string | null;
 }
 
+/**
+ * Represents pagination information used to track subsequent pages of data.
+ */
 export interface PageInfo {
   hasNextPage: boolean;
   endCursor: string | null;

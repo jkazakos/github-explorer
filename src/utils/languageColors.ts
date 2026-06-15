@@ -1,3 +1,9 @@
+/**
+ * Returns the color associated with a given programming language.
+ *
+ * @param language - The name of the programming language.
+ * @returns The color associated with the language, or a default color if the language is not recognized.
+ */
 export function getLanguageColor(language: string | null | undefined): string {
   if (!language) return "#8b949e";
 
