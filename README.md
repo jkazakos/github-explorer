@@ -122,6 +122,14 @@ To run the production build locally:
 pnpm start
 ```
 
+## Project Execution & Time Spent
+
+The overall time dedicated to this assignment was **~20 hours**, distributed across a few days. The execution time can be roughly broken down into:
+
+- **Architecture & Setup:** Next.js server-side proxying, and TanStack Query configuration.
+- **API Integration:** Combining GraphQL with REST fallbacks, handling edge cases, rate limits, and caching.
+- **UI/UX & Styling:** Responsive layouts using Tailwind.
+
 ## Deployment
 
 The project is deployed on [Vercel](https://vercel.com)
