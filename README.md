@@ -91,6 +91,13 @@ Because of this limitation, the application has a fallback mechanism: when the q
     GITHUB_TOKEN=your_github_token
     ```
 
+1. (Optional) Configure Upstash Redis for API rate limiting. If these are left blank, the application will bypass rate limiting and allow all requests.
+
+    ```env
+    KV_REST_API_URL=your_upstash_redis_rest_url_here
+    KV_REST_API_TOKEN=your_upstash_redis_rest_token_here
+    ```
+
 ### Running Locally
 
 To start the development server:
