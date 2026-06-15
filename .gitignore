@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Next.js build outputs and caches
+.next/
+/out/
+build/
+
+# Local environment
+.env*
+!.env.local.example
+
+# Editor files
+.vscode/
+.zed/
+
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts

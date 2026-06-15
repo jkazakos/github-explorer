@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+    --background: #08090c;
+    --foreground: #f8fafc;
+}
+
+@theme {
+    --font-sans: var(--font-geist-sans), Inter, system-ui, -apple-system, sans-serif;
+    --font-mono: var(--font-geist-mono), Courier, monospace;
+    --color-muted: var(--color-slate-400);
+    --color-accent: var(--color-indigo-500);
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+}
+
+/* Custom animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.25s ease forwards;
+}
