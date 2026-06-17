@@ -30,6 +30,19 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
+        <footer className="w-full py-4 mt-auto text-center text-sm text-muted border-t border-white/5">
+          <p>
+            Made by{" "}
+            <a
+              href="https://github.com/jkazakos"
+              className="text-accent hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Iasonas Kazakos
+            </a>
+          </p>
+        </footer>
       </body>
     </html>
   );
