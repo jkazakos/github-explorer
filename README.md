@@ -77,7 +77,12 @@ Because of this limitation, the application has a fallback mechanism: when the q
 
 ### Installation
 
-1. Clone or navigate into the directory:
+1. Clone the repository and navigate into the directory:
+
+    ```bash
+    git clone <repository-url>
+    cd github-explorer
+    ```
 
 1. Install dependencies:
 
@@ -85,18 +90,31 @@ Because of this limitation, the application has a fallback mechanism: when the q
     pnpm install
     ```
 
-1. Generate a Personal Access Token on GitHub (look at `.env.local.example` for instructions): [GitHub Token Settings](https://github.com/settings/tokens).
+1. **Configure Environment Variables:**
 
-    ```env
-    GITHUB_TOKEN=your_github_token
+    Create a local environment file by copying the provided example:
+
+    ```bash
+    cp .env.local.example .env.local
     ```
 
-1. (Optional) Configure Upstash Redis for API rate limiting. If these are left blank, the application will bypass rate limiting and allow all requests.
+    Open the `.env.local` file and configure the following variables:
 
-    ```env
-    KV_REST_API_URL=your_upstash_redis_rest_url_here
-    KV_REST_API_TOKEN=your_upstash_redis_rest_token_here
-    ```
+    - **`GITHUB_TOKEN` (Required)**
+      A classic GitHub Personal Access Token with `read:user`, `read:email` and `read:org` permissions is strictly required to query the GitHub GraphQL API.
+      Generate one here: [GitHub Token Settings](https://github.com/settings/tokens).
+
+      ```env
+      GITHUB_TOKEN=your_github_token
+      ```
+
+    - **Upstash Redis Configuration (Optional)**
+      These variables are used exclusively for API rate limiting. **If you leave these blank, the application will still work perfectly** (it will just bypass rate limiting).
+
+      ```env
+      KV_REST_API_URL=your_upstash_redis_rest_url_here
+      KV_REST_API_TOKEN=your_upstash_redis_rest_token_here
+      ```
 
 ### Running Locally
 
@@ -121,14 +139,6 @@ To run the production build locally:
 ```bash
 pnpm start
 ```
-
-## Project Execution & Time Spent
-
-The overall time dedicated to this assignment was **~20 hours**, distributed across a few days. The execution time can be roughly broken down into:
-
-- **Architecture & Setup:** Next.js server-side proxying, and TanStack Query configuration.
-- **API Integration:** Combining GraphQL with REST fallbacks, handling edge cases, rate limits, and caching.
-- **UI/UX & Styling:** Responsive layouts using Tailwind.
 
 ## Deployment
 
