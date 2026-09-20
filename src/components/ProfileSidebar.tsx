@@ -1,18 +1,16 @@
-import React from "react";
-import { Building2, MapPin, Link, Calendar, ExternalLink } from "lucide-react";
-import { GitHubUser } from "../types/github";
-import { TwitterIcon } from "./Icons";
-import Image from "next/image";
-import { formatDate } from "../utils/formatDate";
-import { githubAvatarLoader } from "../utils/imageLoader";
+import React from 'react';
+import { Building2, MapPin, Link, Calendar, ExternalLink } from 'lucide-react';
+import { type GitHubUser } from '../types/github';
+import { TwitterIcon } from './Icons';
+import Image from 'next/image';
+import { formatDate } from '../utils/formatDate';
+import { githubAvatarLoader } from '../utils/imageLoader';
 
 const getValidUrl = (url: string) => {
   try {
     const urlString = url.trim();
-    const parsed = new URL(
-      urlString.startsWith("http") ? urlString : `https://${urlString}`,
-    );
-    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+    const parsed = new URL(urlString.startsWith('http') ? urlString : `https://${urlString}`);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
       return parsed.href;
     }
   } catch {
@@ -28,8 +26,8 @@ interface ProfileSidebarProps {
 export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ profile }) => {
   return (
     <aside className="flex flex-col gap-6">
-      <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col gap-6">
-        <div className="flex flex-col items-center text-center gap-4">
+      <div className="flex flex-col gap-6 rounded-2xl border border-white/5 bg-slate-900/50 p-6">
+        <div className="flex flex-col items-center gap-4 text-center">
           <div className="relative rounded-full p-1">
             {profile.avatar_url ? (
               <Image
@@ -38,54 +36,50 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ profile }) => {
                 alt={`${profile.name || profile.login}'s avatar`}
                 width={110}
                 height={110}
-                className="rounded-full block"
+                className="block rounded-full"
                 priority
                 loading="eager"
               />
             ) : (
-              <div className="w-27.5 h-27.5 bg-slate-800 rounded-full flex items-center justify-center text-muted font-bold text-2xl">
-                {(profile.name || profile.login || "?").charAt(0).toUpperCase()}
+              <div className="flex h-27.5 w-27.5 items-center justify-center rounded-full bg-slate-800 text-2xl font-bold text-muted">
+                {(profile.name || profile.login || '?').charAt(0).toUpperCase()}
               </div>
             )}
           </div>
           <div>
-            <h2 className="text-xl font-bold">
-              {profile.name || profile.login}
-            </h2>
+            <h2 className="text-xl font-bold">{profile.name || profile.login}</h2>
             <a
               href={profile.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-accent font-mono"
+              className="font-mono text-sm text-accent"
             >
               @{profile.login}
             </a>
           </div>
         </div>
 
-        {profile.bio && (
-          <p className="text-sm text-muted text-center">{profile.bio}</p>
-        )}
+        {profile.bio && <p className="text-center text-sm text-muted">{profile.bio}</p>}
 
         <div
-          className={`grid ${profile.type === "Organization" ? "grid-cols-2" : "grid-cols-3"} gap-2 border-y border-white/5 py-4`}
+          className={`grid ${profile.type === 'Organization' ? 'grid-cols-2' : 'grid-cols-3'} gap-2 border-y border-white/5 py-4`}
         >
           <div className="flex flex-col items-center gap-0.5 text-center">
             <span className="text-lg font-bold">{profile.public_repos}</span>
-            <span className="text-xs text-muted uppercase tracking-wider font-semibold">
+            <span className="text-xs font-semibold tracking-wider text-muted uppercase">
               Repositories
             </span>
           </div>
           <div className="flex flex-col items-center gap-0.5 text-center">
             <span className="text-lg font-bold">{profile.followers}</span>
-            <span className="text-xs text-muted uppercase tracking-wider font-semibold">
+            <span className="text-xs font-semibold tracking-wider text-muted uppercase">
               Followers
             </span>
           </div>
-          {profile.type !== "Organization" && (
+          {profile.type !== 'Organization' && (
             <div className="flex flex-col items-center gap-0.5 text-center">
               <span className="text-lg font-bold">{profile.following}</span>
-              <span className="text-xs text-muted uppercase tracking-wider font-semibold">
+              <span className="text-xs font-semibold tracking-wider text-muted uppercase">
                 Following
               </span>
             </div>
@@ -112,9 +106,9 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ profile }) => {
                 href={getValidUrl(profile.blog)!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
+                className="transition-colors hover:text-accent"
               >
-                {profile.blog.replace(/(^\w+:|^)\/\//, "")}
+                {profile.blog.replace(/(^\w+:|^)\/\//, '')}
               </a>
             </div>
           )}
@@ -125,7 +119,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ profile }) => {
                 href={`https://twitter.com/${encodeURIComponent(profile.twitter_username)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
+                className="transition-colors hover:text-accent"
               >
                 @{profile.twitter_username}
               </a>
@@ -133,9 +127,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ profile }) => {
           )}
           <div className="flex items-center gap-3 text-sm text-muted">
             <Calendar className="shrink-0" size={16} />
-            <span>
-              Joined {formatDate(profile.created_at)}
-            </span>
+            <span>Joined {formatDate(profile.created_at)}</span>
           </div>
         </div>
 
@@ -143,7 +135,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ profile }) => {
           href={profile.html_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-2.5 border border-white/5 rounded-xl bg-slate-800/40 text-sm font-semibold hover:bg-slate-800 hover:border-accent/30 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/5 bg-slate-800/40 py-2.5 text-sm font-semibold transition-all hover:-translate-y-0.5 hover:border-accent/30 hover:bg-slate-800 active:translate-y-0"
         >
           <span>View on GitHub</span>
           <ExternalLink size={14} />

@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Users, ChevronDown } from "lucide-react";
-import Image from "next/image";
-import { GitHubFollower, PageInfo } from "../types/github";
-import { githubAvatarLoader } from "../utils/imageLoader";
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { Users, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import { type GitHubFollower, type PageInfo } from '../types/github';
+import { githubAvatarLoader } from '../utils/imageLoader';
 
 interface FollowerTabProps {
   followers: GitHubFollower[] | null | undefined;
@@ -19,11 +19,9 @@ export const FollowerTab = React.memo(function FollowerTab({
   pageInfo: initialPageInfo,
   username,
 }: FollowerTabProps) {
-  const [followers, setFollowers] = useState<GitHubFollower[]>(
-    initialFollowers || [],
-  );
+  const [followers, setFollowers] = useState<GitHubFollower[]>(initialFollowers || []);
   const [pageInfo, setPageInfo] = useState<PageInfo>(initialPageInfo);
-  const [followerSort, setFollowerSort] = useState("default");
+  const [followerSort, setFollowerSort] = useState('default');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -53,14 +51,12 @@ export const FollowerTab = React.memo(function FollowerTab({
         `/api/github/followers?username=${encodeURIComponent(username)}&cursor=${encodeURIComponent(pageInfo.endCursor)}`,
         { signal: abortControllerRef.current.signal },
       );
-      if (!res.ok) throw new Error("Failed to fetch more");
+      if (!res.ok) throw new Error('Failed to fetch more');
       const data = await res.json();
 
       setFollowers((prev) => {
         const existingIds = new Set(prev.map((f) => f.id));
-        const newFollowers = data.followers.filter(
-          (f: GitHubFollower) => !existingIds.has(f.id),
-        );
+        const newFollowers = data.followers.filter((f: GitHubFollower) => !existingIds.has(f.id));
         return [...prev, ...newFollowers];
       });
       setPageInfo(data.pageInfo);
@@ -69,15 +65,15 @@ export const FollowerTab = React.memo(function FollowerTab({
       requestAnimationFrame(() => {
         window.scrollTo({
           top: currentScrollY,
-          behavior: "instant" as ScrollBehavior,
+          behavior: 'instant' as ScrollBehavior,
         });
       });
     } catch (err: unknown) {
-      if (err instanceof Error && err.name === "AbortError") {
+      if (err instanceof Error && err.name === 'AbortError') {
         // Ignore abort errors
       } else {
         console.error(err instanceof Error ? err.message : String(err));
-        setLoadMoreError("Failed to load more. Please try again.");
+        setLoadMoreError('Failed to load more. Please try again.');
       }
     } finally {
       setIsLoadingMore(false);
@@ -86,27 +82,27 @@ export const FollowerTab = React.memo(function FollowerTab({
 
   const sortedFollowers = useMemo(() => {
     const list = [...followers];
-    if (followerSort === "name-asc") {
+    if (followerSort === 'name-asc') {
       list.sort((a, b) => a.login.localeCompare(b.login));
-    } else if (followerSort === "name-desc") {
+    } else if (followerSort === 'name-desc') {
       list.sort((a, b) => b.login.localeCompare(a.login));
     }
     return list;
   }, [followers, followerSort]);
 
   return (
-    <section className="bg-slate-900/50 border border-white/5 rounded-2xl p-6 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center pb-2 border-b border-white/5 mb-4">
+    <section className="animate-fade-in rounded-2xl border border-white/5 bg-slate-900/50 p-6">
+      <div className="mb-4 flex flex-col gap-4 border-b border-white/5 pb-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
-          Total Followers: <strong>{totalCount}</strong>{" "}
+          Total Followers: <strong>{totalCount}</strong>{' '}
           <span className="text-muted">(showing {followers.length})</span>
         </div>
 
         <div className="flex items-center gap-2.5">
-          <span className="text-xs text-muted whitespace-nowrap">Sort by:</span>
+          <span className="text-xs whitespace-nowrap text-muted">Sort by:</span>
           <div className="relative flex items-center">
             <select
-              className="appearance-none pl-3 pr-10 py-2 bg-slate-800/60 border border-white/5 rounded-xl text-sm cursor-pointer min-w-35 focus:outline-none focus:border-accent"
+              className="min-w-35 cursor-pointer appearance-none rounded-xl border border-white/5 bg-slate-800/60 py-2 pr-10 pl-3 text-sm focus:border-accent focus:outline-none"
               value={followerSort}
               onChange={(e) => setFollowerSort(e.target.value)}
             >
@@ -115,7 +111,7 @@ export const FollowerTab = React.memo(function FollowerTab({
               <option value="name-desc">Username (Z-A)</option>
             </select>
             <ChevronDown
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+              className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-muted"
               size={16}
             />
           </div>
@@ -123,7 +119,7 @@ export const FollowerTab = React.memo(function FollowerTab({
       </div>
 
       {!followers || followers.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-16 px-4 text-center text-muted">
+        <div className="flex flex-col items-center justify-center gap-3 px-4 py-16 text-center text-muted">
           <Users size={40} className="text-muted" />
           <div className="text-base font-semibold">No followers found</div>
           <p className="max-w-xs text-xs text-muted">
@@ -132,16 +128,16 @@ export const FollowerTab = React.memo(function FollowerTab({
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4">
             {sortedFollowers.map((follower) => (
               <div
                 key={follower.id}
                 role="button"
                 tabIndex={0}
-                className="bg-slate-900/30 border border-white/5 rounded-xl p-4 flex flex-col items-center gap-3 text-center hover:-translate-y-0.5 hover:border-accent/30 hover:bg-slate-900/60 cursor-pointer group transition-all duration-300"
+                className="group flex cursor-pointer flex-col items-center gap-3 rounded-xl border border-white/5 bg-slate-900/30 p-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-slate-900/60"
                 onClick={() => executeSearch(follower.login)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
+                  if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     executeSearch(follower.login);
                   }
@@ -154,28 +150,26 @@ export const FollowerTab = React.memo(function FollowerTab({
                     alt={`${follower.login}'s avatar`}
                     width={75}
                     height={75}
-                    className="rounded-full border-2 border-white/5 group-hover:border-accent transition-colors block"
+                    className="block rounded-full border-2 border-white/5 transition-colors group-hover:border-accent"
                   />
                 ) : (
-                  <div className="w-18.75 h-18.75 bg-slate-800 rounded-full border-2 border-white/5 group-hover:border-accent flex items-center justify-center text-muted font-bold text-xl transition-colors">
-                    {(follower.login || "?").charAt(0).toUpperCase()}
+                  <div className="flex h-18.75 w-18.75 items-center justify-center rounded-full border-2 border-white/5 bg-slate-800 text-xl font-bold text-muted transition-colors group-hover:border-accent">
+                    {(follower.login || '?').charAt(0).toUpperCase()}
                   </div>
                 )}
-                <div className="w-full flex flex-col gap-0.5">
+                <div className="flex w-full flex-col gap-0.5">
                   <div className="text-sm font-semibold break-all">
                     {follower.name || follower.login}
                   </div>
                   {follower.name && (
-                    <div className="text-xs text-muted break-all">
-                      {follower.login}
-                    </div>
+                    <div className="text-xs break-all text-muted">{follower.login}</div>
                   )}
                 </div>
               </div>
             ))}
           </div>
           {loadMoreError && (
-            <div className="mt-4 text-center text-sm font-semibold text-red-400 bg-red-400/10 border border-red-400/20 py-2.5 rounded-xl">
+            <div className="mt-4 rounded-xl border border-red-400/20 bg-red-400/10 py-2.5 text-center text-sm font-semibold text-red-400">
               {loadMoreError}
             </div>
           )}
@@ -184,9 +178,9 @@ export const FollowerTab = React.memo(function FollowerTab({
               type="button"
               onClick={fetchMore}
               disabled={isLoadingMore}
-              className="mt-4 py-2.5 px-4 bg-slate-800/60 hover:bg-slate-800 border border-white/5 rounded-xl text-sm font-semibold text-center transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 rounded-xl border border-white/5 bg-slate-800/60 px-4 py-2.5 text-center text-sm font-semibold transition-all hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoadingMore ? "Loading..." : "Load More"}
+              {isLoadingMore ? 'Loading...' : 'Load More'}
             </button>
           )}
         </div>
