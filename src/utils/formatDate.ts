@@ -5,12 +5,12 @@
  * @returns The formatted date string or "Unknown Date" if the input is invalid.
  */
 export function formatDate(dateString: string | null | undefined): string {
-  if (!dateString) return "Unknown Date";
+  if (!dateString) return 'Unknown Date';
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "Unknown Date";
+  if (isNaN(date.getTime())) return 'Unknown Date';
   return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
   });
 }

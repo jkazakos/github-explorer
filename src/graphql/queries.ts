@@ -1,4 +1,4 @@
-import { RepoFragment, FollowerFragment } from "./fragments";
+import { RepoFragment, FollowerFragment } from './fragments';
 
 export const GetUserExplorerDataQuery = `
   ${RepoFragment}

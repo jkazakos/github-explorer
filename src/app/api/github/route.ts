@@ -1,59 +1,56 @@
-import { NextRequest, NextResponse } from "next/server";
-import { GetUserExplorerDataQuery } from "@/graphql/queries";
-import { GraphQLError, RestFollower, GraphQLRepoNode, GraphQLFollowerNode, GraphQLBatchUserName } from "@/types/interfaces";
-import { isValidUsername } from "@/utils/usernameRegex";
-import { checkRateLimit } from "@/utils/rateLimit";
+import { type NextRequest, NextResponse } from 'next/server';
+import { GetUserExplorerDataQuery } from '@/graphql/queries';
+import {
+  type GraphQLError,
+  type RestFollower,
+  type GraphQLRepoNode,
+  type GraphQLFollowerNode,
+  type GraphQLBatchUserName,
+} from '@/types/interfaces';
+import { isValidUsername } from '@/utils/usernameRegex';
+import { checkRateLimit } from '@/utils/rateLimit';
 
 export async function GET(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const ip = request.headers.get('x-forwarded-for') || 'unknown';
   const rateLimit = await checkRateLimit(ip);
 
   if (!rateLimit.success) {
     return NextResponse.json(
-      { error: "Too many requests. Please try again later." },
+      { error: 'Too many requests. Please try again later.' },
       {
         status: 429,
         headers: {
-          "X-RateLimit-Limit": rateLimit.limit.toString(),
-          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
-          "X-RateLimit-Reset": new Date(rateLimit.reset).toISOString(),
+          'X-RateLimit-Limit': rateLimit.limit.toString(),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+          'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
         },
       },
     );
   }
   const { searchParams } = new URL(request.url);
-  const username = searchParams.get("username");
+  const username = searchParams.get('username');
 
   if (!username) {
-    return NextResponse.json(
-      { error: "Username is required" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Username is required' }, { status: 400 });
   }
 
   if (!isValidUsername(username)) {
-    return NextResponse.json(
-      { error: "Invalid username format" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Invalid username format' }, { status: 400 });
   }
 
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
   if (!GITHUB_TOKEN) {
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 
   try {
-    const res = await fetch("https://api.github.com/graphql", {
-      method: "POST",
+    const res = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `bearer ${GITHUB_TOKEN}`,
-        "User-Agent": "NextJS-GitHub-Dashboard-App",
+        'User-Agent': 'NextJS-GitHub-Dashboard-App',
       },
       body: JSON.stringify({
         query: GetUserExplorerDataQuery,
@@ -64,7 +61,7 @@ export async function GET(request: NextRequest) {
 
     if (!res.ok) {
       if (res.status === 401) {
-        return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
       }
       return NextResponse.json(
         {
@@ -78,13 +75,11 @@ export async function GET(request: NextRequest) {
 
     if (errors && errors.length > 0) {
       // Ignore NOT_FOUND errors unless BOTH user and organization are null
-      const nonNotFoundError = errors.find(
-        (e: GraphQLError) => e.type !== "NOT_FOUND",
-      );
+      const nonNotFoundError = errors.find((e: GraphQLError) => e.type !== 'NOT_FOUND');
       if (nonNotFoundError) {
-        const isRateLimit = nonNotFoundError.type === "RATE_LIMITED";
+        const isRateLimit = nonNotFoundError.type === 'RATE_LIMITED';
         return NextResponse.json(
-          { error: "An error occurred while fetching data from GitHub." },
+          { error: 'An error occurred while fetching data from GitHub.' },
           { status: isRateLimit ? 429 : 400 },
         );
       }
@@ -93,10 +88,7 @@ export async function GET(request: NextRequest) {
     const entity = data?.user || data?.organization;
 
     if (!entity) {
-      return NextResponse.json(
-        { error: "User or Organization not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: 'User or Organization not found' }, { status: 404 });
     }
 
     const isOrg = !!data.organization;
@@ -110,23 +102,20 @@ export async function GET(request: NextRequest) {
     if (isOrg) {
       try {
         const [restProfileRes, restFollowersRes] = await Promise.all([
-          fetch(
-            `https://api.github.com/users/${encodeURIComponent(username)}`,
-            {
-              headers: {
-                Accept: "application/vnd.github.v3+json",
-                Authorization: `bearer ${GITHUB_TOKEN}`,
-                "User-Agent": "NextJS-GitHub-Dashboard-App",
-              },
+          fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
+            headers: {
+              Accept: 'application/vnd.github.v3+json',
+              Authorization: `bearer ${GITHUB_TOKEN}`,
+              'User-Agent': 'NextJS-GitHub-Dashboard-App',
             },
-          ),
+          }),
           fetch(
             `https://api.github.com/users/${encodeURIComponent(username)}/followers?per_page=100`,
             {
               headers: {
-                Accept: "application/vnd.github.v3+json",
+                Accept: 'application/vnd.github.v3+json',
                 Authorization: `bearer ${GITHUB_TOKEN}`,
-                "User-Agent": "NextJS-GitHub-Dashboard-App",
+                'User-Agent': 'NextJS-GitHub-Dashboard-App',
               },
             },
           ),
@@ -137,10 +126,7 @@ export async function GET(request: NextRequest) {
           orgFollowersCount = restData.followers || 0;
           orgFollowingCount = restData.following || 0;
         } else {
-          console.error(
-            "REST profile fetch failed with status:",
-            restProfileRes.status,
-          );
+          console.error('REST profile fetch failed with status:', restProfileRes.status);
         }
 
         if (restFollowersRes.ok) {
@@ -151,27 +137,21 @@ export async function GET(request: NextRequest) {
           if (orgFollowersList.length > 0) {
             const variableDecls = orgFollowersList
               .map((_: RestFollower, i: number) => `$login${i}: String!`)
-              .join(", ");
+              .join(', ');
             const aliases = orgFollowersList
-              .map(
-                (_: RestFollower, i: number) =>
-                  `u${i}: user(login: $login${i}) { login name }`,
-              )
-              .join("\n");
+              .map((_: RestFollower, i: number) => `u${i}: user(login: $login${i}) { login name }`)
+              .join('\n');
             const batchQuery = `query BatchNames(${variableDecls}) { ${aliases} }`;
             const variables = Object.fromEntries(
-              orgFollowersList.map((f: RestFollower, i: number) => [
-                `login${i}`,
-                f.login,
-              ]),
+              orgFollowersList.map((f: RestFollower, i: number) => [`login${i}`, f.login]),
             );
             try {
-              const namesRes = await fetch("https://api.github.com/graphql", {
-                method: "POST",
+              const namesRes = await fetch('https://api.github.com/graphql', {
+                method: 'POST',
                 headers: {
-                  "Content-Type": "application/json",
+                  'Content-Type': 'application/json',
                   Authorization: `bearer ${GITHUB_TOKEN}`,
-                  "User-Agent": "NextJS-GitHub-Dashboard-App",
+                  'User-Agent': 'NextJS-GitHub-Dashboard-App',
                 },
                 body: JSON.stringify({ query: batchQuery, variables }),
               });
@@ -185,30 +165,25 @@ export async function GET(request: NextRequest) {
                       loginToName[user.login] = user.name;
                     }
                   });
-                  orgFollowersList = orgFollowersList.map(
-                    (f: RestFollower) => ({
-                      ...f,
-                      name: loginToName[f.login] || null,
-                    }),
-                  );
+                  orgFollowersList = orgFollowersList.map((f: RestFollower) => ({
+                    ...f,
+                    name: loginToName[f.login] || null,
+                  }));
                 }
               }
             } catch (e) {
               console.error(
-                "Failed to batch fetch org follower names",
+                'Failed to batch fetch org follower names',
                 e instanceof Error ? e.message : String(e),
               );
             }
           }
         } else {
-          console.error(
-            "REST followers fetch failed with status:",
-            restFollowersRes.status,
-          );
+          console.error('REST followers fetch failed with status:', restFollowersRes.status);
         }
       } catch (e) {
         console.error(
-          "Failed to fetch org followers fallback",
+          'Failed to fetch org followers fallback',
           e instanceof Error ? e.message : String(e),
         );
       }
@@ -227,28 +202,22 @@ export async function GET(request: NextRequest) {
       bio: isOrg ? entity.description : entity.bio,
       twitter_username: entity.twitterUsername,
       public_repos: entity.repositories?.totalCount ?? 0,
-      followers: isOrg
-        ? orgFollowersCount
-        : (entity.followers?.totalCount ?? 0),
-      following: isOrg
-        ? orgFollowingCount
-        : (entity.following?.totalCount ?? 0),
+      followers: isOrg ? orgFollowersCount : (entity.followers?.totalCount ?? 0),
+      following: isOrg ? orgFollowingCount : (entity.following?.totalCount ?? 0),
       created_at: entity.createdAt,
-      type: isOrg ? "Organization" : "User",
+      type: isOrg ? 'Organization' : 'User',
     };
 
-    const repos = (entity.repositories?.nodes || []).map(
-      (repo: GraphQLRepoNode) => ({
-        id: repo.databaseId,
-        name: repo.name,
-        html_url: repo.url,
-        description: repo.description,
-        stargazers_count: repo.stargazerCount,
-        language: repo.primaryLanguage?.name || null,
-        pushed_at: repo.pushedAt,
-        license: repo.licenseInfo ? { name: repo.licenseInfo.name } : null,
-      }),
-    );
+    const repos = (entity.repositories?.nodes || []).map((repo: GraphQLRepoNode) => ({
+      id: repo.databaseId,
+      name: repo.name,
+      html_url: repo.url,
+      description: repo.description,
+      stargazers_count: repo.stargazerCount,
+      language: repo.primaryLanguage?.name || null,
+      pushed_at: repo.pushedAt,
+      license: repo.licenseInfo ? { name: repo.licenseInfo.name } : null,
+    }));
 
     const followers = isOrg
       ? orgFollowersList.map((follower: RestFollower) => ({
@@ -258,15 +227,13 @@ export async function GET(request: NextRequest) {
           html_url: follower.html_url,
           name: follower.name || null,
         }))
-      : (entity.followers?.nodes || []).map(
-          (follower: GraphQLFollowerNode) => ({
-            login: follower.login,
-            id: follower.databaseId,
-            avatar_url: follower.avatarUrl,
-            html_url: follower.url,
-            name: follower.name || null,
-          }),
-        );
+      : (entity.followers?.nodes || []).map((follower: GraphQLFollowerNode) => ({
+          login: follower.login,
+          id: follower.databaseId,
+          avatar_url: follower.avatarUrl,
+          html_url: follower.url,
+          name: follower.name || null,
+        }));
 
     const repoPageInfo = entity.repositories?.pageInfo || {
       hasNextPage: false,
@@ -278,7 +245,7 @@ export async function GET(request: NextRequest) {
     const followerPageInfo = isOrg
       ? {
           hasNextPage: orgFollowersList.length === 100,
-          endCursor: orgFollowersList.length === 100 ? "2" : null,
+          endCursor: orgFollowersList.length === 100 ? '2' : null,
         }
       : entity.followers?.pageInfo || { hasNextPage: false, endCursor: null };
 
@@ -289,15 +256,12 @@ export async function GET(request: NextRequest) {
       repoPageInfo,
       followerPageInfo,
     });
-    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set('Cache-Control', 'private, no-store');
     return response;
   } catch (error: unknown) {
-    console.error(
-      "GitHub proxy error:",
-      error instanceof Error ? error.message : String(error),
-    );
+    console.error('GitHub proxy error:', error instanceof Error ? error.message : String(error));
     return NextResponse.json(
-      { error: "Internal server error while fetching GitHub data" },
+      { error: 'Internal server error while fetching GitHub data' },
       { status: 500 },
     );
   }

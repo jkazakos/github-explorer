@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 interface IconProps {
   size?: number;
   className?: string;
 }
 
-export const GithubIcon: React.FC<IconProps> = ({ size = 20, className = "" }) => (
+export const GithubIcon: React.FC<IconProps> = ({ size = 20, className = '' }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -23,7 +23,7 @@ export const GithubIcon: React.FC<IconProps> = ({ size = 20, className = "" }) =
   </svg>
 );
 
-export const TwitterIcon: React.FC<IconProps> = ({ size = 20, className = "" }) => (
+export const TwitterIcon: React.FC<IconProps> = ({ size = 20, className = '' }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}

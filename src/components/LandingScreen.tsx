@@ -1,6 +1,6 @@
-import React from "react";
-import { Search, AlertCircle } from "lucide-react";
-import { GithubIcon } from "./Icons";
+import React from 'react';
+import { Search, AlertCircle } from 'lucide-react';
+import { GithubIcon } from './Icons';
 
 interface LandingScreenProps {
   searchVal: string;
@@ -21,50 +21,47 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center max-w-7xl mx-auto my-24 gap-6 px-4 animate-fade-in">
-      <div className="relative flex items-center justify-center w-20 h-20 rounded-full bg-accent/10 mb-2">
+    <div className="animate-fade-in mx-auto my-24 flex max-w-7xl flex-col items-center justify-center gap-6 px-4 text-center">
+      <div className="relative mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-accent/10">
         <GithubIcon size={44} className="text-accent" />
       </div>
       <div>
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
           GitHub Explorer
         </h1>
-        <p className="text-muted text-sm md:text-base lg:text-lg mt-2.5">
-          Explore GitHub profiles. Retrieve user metadata, public repositories,
-          and follower networks instantly.
+        <p className="mt-2.5 text-sm text-muted md:text-base lg:text-lg">
+          Explore GitHub profiles. Retrieve user metadata, public repositories, and follower
+          networks instantly.
         </p>
       </div>
 
-      <div className="flex flex-col w-full max-w-xl gap-2">
+      <div className="flex w-full max-w-xl flex-col gap-2">
         <form
           onSubmit={handleSubmit}
-          className="flex w-full gap-2 p-2 bg-slate-900/60 border border-white/5 rounded-2xl focus-within:border-accent/40"
+          className="flex w-full gap-2 rounded-2xl border border-white/5 bg-slate-900/60 p-2 focus-within:border-accent/40"
         >
-          <div className="relative flex-1 flex items-center">
+          <div className="relative flex flex-1 items-center">
             <Search className="absolute left-3.5 text-muted" size={20} />
             <input
               type="text"
               maxLength={39}
               aria-label="Search GitHub username"
               placeholder="GitHub username..."
-              className="w-full text-xs md:text-base pl-12 pr-4 py-3 bg-transparent border-0 placeholder-text-muted focus:outline-none"
+              className="placeholder-text-muted w-full border-0 bg-transparent py-3 pr-4 pl-12 text-xs focus:outline-none md:text-base"
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
             />
           </div>
           <button
             type="submit"
-            className="flex text-xs md:text-base items-center gap-2 px-6 bg-accent font-semibold rounded-xl hover:-translate-y-0.5 active:translate-y-0 transition-all whitespace-nowrap cursor-pointer"
+            className="flex cursor-pointer items-center gap-2 rounded-xl bg-accent px-6 text-xs font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 active:translate-y-0 md:text-base"
           >
             Search
           </button>
         </form>
         {validationError && (
-          <p className="text-red-500 text-xs md:text-sm lg:text-base pl-2 text-left animate-fade-in">
-            <AlertCircle
-              size={18}
-              className="inline-block mr-1.5 align-text-bottom"
-            />
+          <p className="animate-fade-in pl-2 text-left text-xs text-red-500 md:text-sm lg:text-base">
+            <AlertCircle size={18} className="mr-1.5 inline-block align-text-bottom" />
             {validationError}
           </p>
         )}

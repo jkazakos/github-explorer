@@ -4,4 +4,4 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - lucide-react@1.18.0
 overrides:
-  postcss: ">=8.5.10"
+  postcss: '>=8.5.10'
