@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Next.js build outputs and caches
+.next/
+out/
+build/
+dist/
+
+# Local environment files
+.env*
+!.env.local.example
+
+# Editor files
+.vscode/
+.zed/
+
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
+
+# TanStack Query cache
+.tanstack/
+
+# Package manager lockfiles
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Static public assets
+public/
